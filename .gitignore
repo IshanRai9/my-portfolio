@@ -30,8 +30,6 @@ yarn-error.log*
 # TypeScript cache
 *.tsbuildinfo
 
-# Mac junk files
-Icon?
 
 # IDE files (optional)
 .idea/
