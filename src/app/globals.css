@@ -44,7 +44,6 @@ body {
   --c1: #1d1d1d;
   --c2: #4e4f51;
   --c3: #3c3c3c;
-
   background: repeating-conic-gradient(
         from 30deg,
         #0000 0 120deg,
@@ -59,6 +58,7 @@ body {
     );
   background-size: var(--s) calc(var(--s) * 0.577);
 }
+
 .caret {
   font-weight: 900;
   font-size: 1.5rem;
@@ -104,145 +104,30 @@ body {
 .loader .box:nth-child(4) { inset: 10%; z-index: 96; border-color: rgba(100, 100, 100, 0.4); animation-delay: 0.6s; }
 .loader .box:nth-child(5) { inset: 0%;  z-index: 95; border-color: rgba(100, 100, 100, 0.2); animation-delay: 0.8s; }
 
-.loader .logo {
+.loader-percent {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-content: center;
-  padding: 30%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: bold;
+  color: #ffffffa1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  z-index: 100;
+  pointer-events: none;
 }
 
-.loader .logo svg {
-  fill: var(--logo-color);
-  width: 100%;
-  animation: color-change var(--duration) infinite ease-in-out;
-}
-
-/* Hand Animation */
-.🤚 {
-  --skin-color: #c78567;
-  --tap-speed: 0.6s;
-  --tap-stagger: 0.1s;
-  position: absolute;
-  width: 80px;
-  height: 60px;
-  z-index: 2;
-  transform: scale(0.8);
-  left: 49%
-}
-
-.🤚:before {
-  content: '';
-  display: block;
-  width: 180%;
-  height: 75%;
-  position: absolute;
-  top: 70%;
-  right: 20%;
-  background-color: black;
-  border-radius: 40px 10px;
-  filter: blur(10px);
-  opacity: 0.3;
-}
-
-.🌴 {
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: var(--skin-color);
-  border-radius: 10px 40px;
-}
-
-.👍 {
-  position: absolute;
-  width: 120%;
-  height: 38px;
-  background-color: var(--skin-color);
-  bottom: -18%;
-  right: 1%;
-  transform-origin: calc(100% - 20px) 20px;
-  transform: rotate(-20deg);
-  border-radius: 30px 20px 20px 10px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-  border-left: 2px solid rgba(0, 0, 0, 0.1);
-}
-
-.👍:after {
-  width: 20%;
-  height: 60%;
-  content: '';
-  background-color: rgba(255, 255, 255, 0.3);
-  position: absolute;
-  bottom: -8%;
-  left: 5px;
-  border-radius: 60% 10% 10% 30%;
-  border-right: 2px solid rgba(0, 0, 0, 0.05);
-}
-
-.👉 {
-  position: absolute;
-  width: 80%;
-  height: 35px;
-  background-color: var(--skin-color);
-  bottom: 32%;
-  right: 64%;
-  transform-origin: 100% 20px;
-  animation-duration: calc(var(--tap-speed) * 2);
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  transform: rotate(10deg);
-}
-
-.👉:before {
-  content: '';
-  position: absolute;
-  width: 140%;
-  height: 30px;
-  background-color: var(--skin-color);
-  bottom: 8%;
-  right: 65%;
-  transform-origin: calc(100% - 20px) 20px;
-  transform: rotate(-60deg);
-  border-radius: 20px;
-}
-
-.👉:nth-child(1) { animation-delay: 0; filter: brightness(70%); animation-name: tap-upper-1; }
-.👉:nth-child(2) { animation-delay: var(--tap-stagger); filter: brightness(80%); animation-name: tap-upper-2; }
-.👉:nth-child(3) { animation-delay: calc(var(--tap-stagger) * 2); filter: brightness(90%); animation-name: tap-upper-3; }
-.👉:nth-child(4) { animation-delay: calc(var(--tap-stagger) * 3); filter: brightness(100%); animation-name: tap-upper-4; }
-
-/* Animations */
 @keyframes ripple {
-  0%   { transform: scale(1);   box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 10px -0px; }
-  50%  { transform: scale(1.3); box-shadow: rgba(0, 0, 0, 0.3) 0px 30px 20px -0px; }
-  100% { transform: scale(1);   box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 10px -0px; }
-}
-
-@keyframes color-change {
-  0%   { fill: var(--logo-color); }
-  50%  { fill: white; }
-  100% { fill: var(--logo-color); }
-}
-
-@keyframes tap-upper-1 {
-  0%, 50%, 100% { transform: rotate(10deg) scale(0.4); }
-  40% { transform: rotate(50deg) scale(0.4); }
-}
-
-@keyframes tap-upper-2 {
-  0%, 50%, 100% { transform: rotate(10deg) scale(0.6); }
-  40% { transform: rotate(50deg) scale(0.6); }
-}
-
-@keyframes tap-upper-3 {
-  0%, 50%, 100% { transform: rotate(10deg) scale(0.8); }
-  40% { transform: rotate(50deg) scale(0.8); }
-}
-
-@keyframes tap-upper-4 {
-  0%, 50%, 100% { transform: rotate(10deg) scale(1); }
-  40% { transform: rotate(50deg) scale(1); }
+  0% {
+    transform: scale(1);
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 10px -0px;
+  }
+  50% {
+    transform: scale(1.3);
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 30px 20px -0px;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 10px -0px;
+  }
 }
