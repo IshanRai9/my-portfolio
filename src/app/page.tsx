@@ -60,7 +60,7 @@ export default function Page() {
         ease: 'none',
         onComplete: () => {
           gsap.to(titleRef.current, {
-            text: 'AI ML Engineer | Full Stack Developer',
+            text: 'AI ML Engineer || Full Stack Developer',
             duration: 1,
             ease: 'none',
             onComplete: () => {
@@ -107,6 +107,10 @@ export default function Page() {
                 <span ref={titleRef}></span>
                 <span className="caret opacity-0">|</span>
               </h2>
+              <p className="flex flex-row flex-wrap gap-2 items-center mt-2">
+                <a href="https://www.linkedin.com/in/ishan-s-rai/"><Image src="https://skillicons.dev/icons?i=linkedin" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
+                <a href="https://x.com/iamishanrai/"><Image src="https://skillicons.dev/icons?i=twitter" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
+              </p>
             </div>
             <div>
               <Image
@@ -135,20 +139,7 @@ export default function Page() {
           <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-50 text-black text-center">
             <h2 className="text-6xl font-bold">My Skills</h2>
             <p className="mt-4">
-                <Image src="https://skillicons.dev/icons?i=github,aws,python,java,c,cpp,html,css,js,react,nextjs"
-                  alt="Skill icons"
-                  width={1000} // or your preferred width
-                  height={40} // or your preferred height
-                  unoptimized // since it's an external image and not local
-                  />
-            </p>
-            <p className="mt-4">
-                  <Image src="https://skillicons.dev/icons?i=git,tailwind,tensorflow,flask,dotnet,opencv,"
-                  alt="Skill icons"
-                  width={500} // or your preferred width
-                  height={40} // or your preferred height
-                  unoptimized // since it's an external image and not local
-                  />
+                <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9" alt="Skill icons" width={700} height={40} unoptimized/>
             </p>
           </section>
 
