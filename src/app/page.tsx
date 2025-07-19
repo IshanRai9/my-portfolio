@@ -108,8 +108,8 @@ export default function Page() {
                 <span className="caret opacity-0">|</span>
               </h2>
               <p className="flex flex-row flex-wrap gap-2 items-center mt-2">
-                <a href="https://www.linkedin.com/in/ishan-s-rai/"><Image src="https://skillicons.dev/icons?i=linkedin" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
-                <a href="https://x.com/iamishanrai/"><Image src="https://skillicons.dev/icons?i=twitter" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
+                <a href="https://www.linkedin.com/in/ishan-s-rai/"><Image src="https://skillicons.dev/icons?i=linkedin&theme=dark" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
+                <a href="https://x.com/iamishanrai/"><Image src="https://skillicons.dev/icons?i=twitter&theme=dark" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
               </p>
             </div>
             <div>
@@ -139,7 +139,7 @@ export default function Page() {
           <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-50 text-black text-center">
             <h2 className="text-6xl font-bold">My Skills</h2>
             <p className="mt-4">
-                <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9" alt="Skill icons" width={700} height={40} unoptimized/>
+                <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" alt="Skill icons" width={700} height={40} unoptimized/>
             </p>
           </section>
 

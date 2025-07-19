@@ -40,7 +40,7 @@ body {
 }
 
 .grayscale {
-  filter: brightness(0.8) saturate(0.5);
+  filter: brightness(1) saturate(1);
 }
 
 /* From Uiverse.io by csemszepp */ 
@@ -48,7 +48,7 @@ body {
   min-width: 100vw;
   min-height: 100vh;
   width: 100vw;
-  height: 100vh;
+  height: 110vh;
   --s: 200px; /* control the size */
   --c1: #1d1d1d;
   --c2: #4e4f51;
