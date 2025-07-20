@@ -29,7 +29,7 @@ export default function Page() {
         if (percent >= 100) {
           clearInterval(interval);
         }
-      }, 50); // 5000ms / 100 = 50ms per percent
+      }, 50);
       timer = setTimeout(() => setIsLoading(false), 5000);
     }
     return () => {
@@ -53,7 +53,8 @@ export default function Page() {
         smooth: 1.2,
         effects: true,
       });
-
+  
+      // Animate text
       gsap.to(nameRef.current, {
         text: "Hello, I'm Ishan Rai",
         duration: 1.3,
@@ -74,15 +75,46 @@ export default function Page() {
           });
         },
       });
+  
+      // ✅ Animate sections when they enter view
+      ScrollTrigger.batch(['#intro', '#about', '#experience'], {
+        onEnter: batch => {
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: 100 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              stagger: 0.2,
+              ease: 'power2.out',
+            }
+          );
+        },
+        once: true,
+        start: 'top 80%',
+      });
+  
+      // ✅ Parallax effect for intro
+      gsap.to('#intro', {
+        yPercent: -10,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '#intro',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
     }
   }, [isLoading]);
+  
 
   if (isLoading) {
     return (
       <div className="loader-wrapper" role="status" aria-label="Loading content">
         <div className="loader">
-          <div className="box">
-          </div>
+          <div className="box"></div>
           <div className="box"></div>
           <div className="box"></div>
           <div className="box"></div>
@@ -97,8 +129,9 @@ export default function Page() {
     <div id="smooth-wrapper" ref={main} className="bg-white">
       <div id="smooth-content">
         <main className="font-sans scroll-smooth text-white">
+
           {/* Intro Section */}
-          <section id="intro" className="container min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40">
+          <section id="intro" className="container  bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white">
             <div>
               <h1 className="text-5xl font-bold mb-4">
                 <span ref={nameRef}></span>
@@ -108,23 +141,17 @@ export default function Page() {
                 <span className="caret opacity-0">|</span>
               </h2>
               <p className="flex flex-row flex-wrap gap-2 items-center mt-2">
-                <a href="https://www.linkedin.com/in/ishan-s-rai/"><Image src="https://skillicons.dev/icons?i=linkedin&theme=dark" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
-                <a href="https://x.com/iamishanrai/"><Image src="https://skillicons.dev/icons?i=twitter&theme=dark" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
+                <a href="https://www.linkedin.com/in/ishan-s-rai/"><Image src="https://skillicons.dev/icons?i=linkedin&theme=dark" alt="LinkedIn" width={50} height={40} unoptimized className="grayscale"/></a>
+                <a href="https://x.com/iamishanrai/"><Image src="https://skillicons.dev/icons?i=twitter&theme=dark" alt="Twitter" width={50} height={40} unoptimized className="grayscale"/></a>
               </p>
             </div>
             <div>
-              <Image
-                src="/img/profile.png"
-                alt="Profile"
-                width={500}
-                height={500}
-                className="rounded-full"
-              />
+              <Image src="/img/profile.png" alt="Profile" width={500} height={500} className="rounded-full" />
             </div>
           </section>
 
           {/* About Section */}
-          <section id="about" className="min-h-screen flex flex-col items-start justify-center px-16 bg-[#4e4f51] text-white text-center">
+          <section id="about" className=" min-h-screen flex flex-col items-start justify-center px-16 bg-glossy-black text-white text-center">
             <h2 className="text-6xl mx-auto font-bold mb-6">About Me</h2>
             <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-gray-300">
               Results-driven AI/ML and Software Engineer with professional experience in designing, building, 
@@ -135,17 +162,17 @@ export default function Page() {
             </p>
           </section>
 
-          {/* Experience Section */}
-          <section id="experience" className="min-h-screen flex items-center justify-center px-16 bg-white text-black">
-            <h2 className="text-4xl font-bold">Experience</h2>
-          </section>
-
           {/* Skills Section */}
-          <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-gray-700 text-black text-center">
+          <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-50 text-black text-center">
             <h2 className="text-6xl font-bold">My Skills</h2>
             <p className="mt-4">
-                <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" alt="Skill icons" width={700} height={40} unoptimized/>
+              <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" alt="Skill icons" width={700} height={40} unoptimized/>
             </p>
+          </section>
+
+          {/* Experience Section */}
+          <section id="experience" className=" min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
+            <h2 className="text-4xl font-bold">Experience</h2>
           </section>
 
           {/* Projects Section */}
@@ -163,10 +190,11 @@ export default function Page() {
             <h2 className="text-4xl font-bold">Certifications</h2>
           </section>
 
-          {/* About Section */}
+          {/* Contact Section */}
           <section id="contact" className="min-h-screen flex items-center justify-center px-16 bg-zinc-900 text-white">
             <h2 className="text-4xl font-bold">Contact Me</h2>
           </section>
+
         </main>
       </div>
     </div>

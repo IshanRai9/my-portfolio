@@ -43,6 +43,14 @@ body {
   filter: brightness(1) saturate(1);
 }
 
+.bg-glossy-black {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+
 /* From Uiverse.io by csemszepp */ 
 .container {
   min-width: 100vw;
