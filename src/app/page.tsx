@@ -124,7 +124,7 @@ export default function Page() {
           </section>
 
           {/* About Section */}
-          <section id="about" className="min-h-screen flex flex-col items-start justify-center px-16 bg-zinc-800 text-white text-center">
+          <section id="about" className="min-h-screen flex flex-col items-start justify-center px-16 bg-[#4e4f51] text-white text-center">
             <h2 className="text-6xl mx-auto font-bold mb-6">About Me</h2>
             <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-gray-300">
               Results-driven AI/ML and Software Engineer with professional experience in designing, building, 
@@ -135,17 +135,17 @@ export default function Page() {
             </p>
           </section>
 
+          {/* Experience Section */}
+          <section id="experience" className="min-h-screen flex items-center justify-center px-16 bg-white text-black">
+            <h2 className="text-4xl font-bold">Experience</h2>
+          </section>
+
           {/* Skills Section */}
-          <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-50 text-black text-center">
+          <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-gray-700 text-black text-center">
             <h2 className="text-6xl font-bold">My Skills</h2>
             <p className="mt-4">
                 <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" alt="Skill icons" width={700} height={40} unoptimized/>
             </p>
-          </section>
-
-          {/* Experience Section */}
-          <section id="education" className="min-h-screen flex items-center justify-center px-16 bg-white text-black">
-            <h2 className="text-4xl font-bold">Experience</h2>
           </section>
 
           {/* Projects Section */}
@@ -154,7 +154,7 @@ export default function Page() {
           </section>
 
           {/* Education Section */}
-          <section id="experience" className="min-h-screen flex items-center justify-center px-16 bg-white text-black">
+          <section id="education" className="min-h-screen flex items-center justify-center px-16 bg-white text-black">
             <h2 className="text-4xl font-bold">Education</h2>
           </section>
 
