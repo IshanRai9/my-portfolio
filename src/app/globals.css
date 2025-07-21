@@ -50,36 +50,26 @@ body {
   background-attachment: fixed;
 }
 
+/* Fade-in Slide-up Section */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease-out;
+}
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-/* From Uiverse.io by csemszepp */ 
-.container {
-  min-width: 100vw;
-  min-height: 100vh;
-  width: 100vw;
-  height: 110vh;
-  --s: 200px; /* control the size */
-  --c1: #1d1d1d;
-  --c2: #4e4f51;
-  --c3: #3c3c3c;
-  background: repeating-conic-gradient(
-        from 30deg,
-        #0000 0 120deg,
-        var(--c3) 0 180deg
-      )
-      calc(0.5 * var(--s)) calc(0.5 * var(--s) * 0.577),
-    repeating-conic-gradient(
-      from 30deg,
-      var(--c1) 0 60deg,
-      var(--c2) 0 120deg,
-      var(--c3) 0 180deg
-    );
-  background-size: var(--s) calc(var(--s) * 0.577);
+/* Optional: Light Section Overlay */
+.bg-overlay {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .caret {
   font-weight: 900;
   font-size: 1.5rem;
-  letter-spacing: -1px; /* helps tighten spacing */
+  letter-spacing: -1px;
 }
 
 /* Centering wrapper */
@@ -149,7 +139,6 @@ body {
   }
 }
 
-
 body {
   font-family: Roboto, sans-serif;
 }
@@ -163,7 +152,6 @@ body {
   transform: rotateX(-20deg) translateY(-70px);
   transform-style: preserve-3d;
   perspective: 800px;
-  user-select: none;
   cursor: grab;
 }
 

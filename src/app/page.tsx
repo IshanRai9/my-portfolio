@@ -17,10 +17,6 @@ export default function Page() {
   const titleRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingPercent, setLoadingPercent] = useState(0);
-  const images = document.querySelectorAll('.carousel-image')
-  const radius = 242
-  const progress = {value: 0}
-  const carousel = document.querySelector('.carousel')
   useEffect(() => {
     let percent = 0;
     let interval: NodeJS.Timeout;
@@ -47,6 +43,21 @@ export default function Page() {
       smoother.current?.kill();
     };
   }, []);
+  
+  useEffect(() => {
+    const sections = document.querySelectorAll('.fade-in-section');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+  
+    sections.forEach(section => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+  
 
   useGSAP(() => {
     if (!isLoading && !smoother.current) {
@@ -112,38 +123,51 @@ export default function Page() {
     }
   }, [isLoading]);
   
-
-  Observer.create({
-    target: carousel,
-    type: "wheel,pointer",
-    onPress: (self) => {
-      carousel.style.cursor = 'grabbing'
-    },
-    onRelease: (self) => {
-      carousel.style.cursor = 'grab'
-    },
-    onChange: (self) => {
-      gsap.killTweensOf(progress)
-      const p = self.event.type === 'wheel' ? self.deltaY * -.0005 : self.deltaX * .05
-      gsap.to(progress, {
-        duration: 2,
-        ease: 'power4.out',
-        value: `+=${p}`
-      })
-    }
-  })
-
-  const animate = () => {
-    images.forEach((image, index) => {
-      const theta = index / images.length - progress.value
-      const x = -Math.sin(theta * Math.PI * 2) * radius
-      const y = Math.cos(theta * Math.PI * 2) * radius
-      image.style.transform = `translate3d(${x}px, 0px, ${y}px) rotateY(${360 * -theta }deg)`
-      const c = Math.floor(index/images.length * 360)
-      image.style.background = `hsla(${c}, 90%, 50%, .5)`
-    })
-  }
-  gsap.ticker.add(animate)
+  useEffect(() => {
+    const images = document.querySelectorAll('.carousel-image');
+    const carousel = document.querySelector('.carousel');
+    const radius = 242;
+    const progress = { value: 0 };
+  
+    if (!carousel || images.length === 0) return;
+  
+    Observer.create({
+      target: carousel,
+      type: "wheel,pointer",
+      onPress: () => {
+        carousel.style.cursor = 'grabbing';
+      },
+      onRelease: () => {
+        carousel.style.cursor = 'grab';
+      },
+      onChange: (self) => {
+        gsap.killTweensOf(progress);
+        const p = self.event.type === 'wheel' ? self.deltaY * -0.0005 : self.deltaX * 0.05;
+        gsap.to(progress, {
+          duration: 2,
+          ease: 'power4.out',
+          value: `+=${p}`,
+        });
+      }
+    });
+  
+    const animate = () => {
+      images.forEach((image, index) => {
+        const theta = index / images.length - progress.value;
+        const x = -Math.sin(theta * Math.PI * 2) * radius;
+        const y = Math.cos(theta * Math.PI * 2) * radius;
+        image.style.transform = `translate3d(${x}px, 0px, ${y}px) rotateY(${360 * -theta}deg)`;
+        const c = Math.floor(index / images.length * 360);
+        image.style.background = `hsla(${c}, 90%, 50%, .5)`;
+      });
+    };
+    gsap.ticker.add(animate);
+  
+    return () => {
+      gsap.ticker.remove(animate);
+    };
+  }, []);
+  
 
     if (isLoading) {
       return (
@@ -212,18 +236,18 @@ export default function Page() {
           </section>
 
           {/* Projects Section */}
-          <section id="projects" className="min-h-screen flex items-center justify-center px-16 bg-zinc-100 text-black">
+          <section id="projects" className="bg-glossy-black text-white">
             <h2 className="text-4xl font-bold">Projects</h2>
-            <div className="carousel">
-              <div className="carousel-image">1</div>
-              <div className="carousel-image">2</div>
-              <div className="carousel-image">3</div>
-              <div className="carousel-image">4</div>
-              <div className="carousel-image">5</div>
-              <div className="carousel-image">6</div>
-              <div className="carousel-image">7</div>
-              <div className="carousel-image">8</div>
-            </div>
+              <div className="carousel">
+                <div className="carousel-image">1</div>
+                <div className="carousel-image">2</div>
+                <div className="carousel-image">3</div>
+                <div className="carousel-image">4</div>
+                <div className="carousel-image">5</div>
+                <div className="carousel-image">6</div>
+                <div className="carousel-image">7</div>
+                <div className="carousel-image">8</div>
+              </div>
           </section>
 
           {/* Education Section */}
