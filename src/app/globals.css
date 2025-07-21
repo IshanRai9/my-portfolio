@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
 }
 
 @theme inline {
@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #ffffff;
   }
 }
 
@@ -91,7 +91,7 @@ body {
   width: 100vw;
   position: relative;
   overflow: hidden;
-  background-color: #000; /* Optional */
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
 }
 
 /* Ripple Loader */
@@ -146,5 +146,44 @@ body {
   100% {
     transform: scale(1);
     box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 10px -0px;
+  }
+}
+
+
+body {
+  font-family: Roboto, sans-serif;
+}
+
+.carousel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  transform: rotateX(-20deg) translateY(-70px);
+  transform-style: preserve-3d;
+  perspective: 800px;
+  user-select: none;
+  cursor: grab;
+}
+
+.carousel-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -100px 0 0 -100px;
+  width: 200px;
+  height: 200px;
+  transform: translate3d(0, 0, -10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  transform-origin: 50% 50%;
+}
+
+@media (max-width: 600px) {
+  .carousel {
+    transform: rotateX(-10deg) scale(.6) translateY(-60px);
   }
 }

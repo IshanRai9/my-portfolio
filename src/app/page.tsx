@@ -17,7 +17,10 @@ export default function Page() {
   const titleRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingPercent, setLoadingPercent] = useState(0);
-
+  const images = document.querySelectorAll('.carousel-image')
+  const radius = 242
+  const progress = {value: 0}
+  const carousel = document.querySelector('.carousel')
   useEffect(() => {
     let percent = 0;
     let interval: NodeJS.Timeout;
@@ -110,23 +113,55 @@ export default function Page() {
   }, [isLoading]);
   
 
-  if (isLoading) {
-    return (
-      <div className="loader-wrapper" role="status" aria-label="Loading content">
-        <div className="loader">
-          <div className="box"></div>
-          <div className="box"></div>
-          <div className="box"></div>
-          <div className="box"></div>
-          <div className="box"></div>
-          <div className="loader-percent">{loadingPercent}%</div>
-        </div>
-      </div>
-    );
+  Observer.create({
+    target: carousel,
+    type: "wheel,pointer",
+    onPress: (self) => {
+      carousel.style.cursor = 'grabbing'
+    },
+    onRelease: (self) => {
+      carousel.style.cursor = 'grab'
+    },
+    onChange: (self) => {
+      gsap.killTweensOf(progress)
+      const p = self.event.type === 'wheel' ? self.deltaY * -.0005 : self.deltaX * .05
+      gsap.to(progress, {
+        duration: 2,
+        ease: 'power4.out',
+        value: `+=${p}`
+      })
+    }
+  })
+
+  const animate = () => {
+    images.forEach((image, index) => {
+      const theta = index / images.length - progress.value
+      const x = -Math.sin(theta * Math.PI * 2) * radius
+      const y = Math.cos(theta * Math.PI * 2) * radius
+      image.style.transform = `translate3d(${x}px, 0px, ${y}px) rotateY(${360 * -theta }deg)`
+      const c = Math.floor(index/images.length * 360)
+      image.style.background = `hsla(${c}, 90%, 50%, .5)`
+    })
   }
+  gsap.ticker.add(animate)
+
+    if (isLoading) {
+      return (
+        <div className="loader-wrapper" role="status" aria-label="Loading content">
+          <div className="loader">
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="loader-percent">{loadingPercent}%</div>
+          </div>
+        </div>
+      );
+    }
 
   return (
-    <div id="smooth-wrapper" ref={main} className="bg-white">
+    <div id="smooth-wrapper" ref={main} className="bg-glossy-black">
       <div id="smooth-content">
         <main className="font-sans scroll-smooth text-white">
 
@@ -141,6 +176,7 @@ export default function Page() {
                 <span className="caret opacity-0">|</span>
               </h2>
               <p className="flex flex-row flex-wrap gap-2 items-center mt-2">
+                <a href="https://www.github.com/ishanrai9"><Image src="https://skillicons.dev/icons?i=github&theme=dark" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
                 <a href="https://www.linkedin.com/in/ishan-s-rai/"><Image src="https://skillicons.dev/icons?i=linkedin&theme=dark" alt="LinkedIn" width={50} height={40} unoptimized className="grayscale"/></a>
                 <a href="https://x.com/iamishanrai/"><Image src="https://skillicons.dev/icons?i=twitter&theme=dark" alt="Twitter" width={50} height={40} unoptimized className="grayscale"/></a>
               </p>
@@ -151,7 +187,7 @@ export default function Page() {
           </section>
 
           {/* About Section */}
-          <section id="about" className=" min-h-screen flex flex-col items-start justify-center px-16 bg-glossy-black text-white text-center">
+          <section id="about" className="min-h-screen flex flex-col items-start justify-center px-16 bg-glossy-black text-white text-center">
             <h2 className="text-6xl mx-auto font-bold mb-6">About Me</h2>
             <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-gray-300">
               Results-driven AI/ML and Software Engineer with professional experience in designing, building, 
@@ -162,6 +198,11 @@ export default function Page() {
             </p>
           </section>
 
+          {/* Experience Section */}
+          <section id="experience" className=" min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
+            <h2 className="text-4xl font-bold">Experience</h2>
+          </section>
+
           {/* Skills Section */}
           <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-50 text-black text-center">
             <h2 className="text-6xl font-bold">My Skills</h2>
@@ -170,14 +211,19 @@ export default function Page() {
             </p>
           </section>
 
-          {/* Experience Section */}
-          <section id="experience" className=" min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
-            <h2 className="text-4xl font-bold">Experience</h2>
-          </section>
-
           {/* Projects Section */}
           <section id="projects" className="min-h-screen flex items-center justify-center px-16 bg-zinc-100 text-black">
             <h2 className="text-4xl font-bold">Projects</h2>
+            <div className="carousel">
+              <div className="carousel-image">1</div>
+              <div className="carousel-image">2</div>
+              <div className="carousel-image">3</div>
+              <div className="carousel-image">4</div>
+              <div className="carousel-image">5</div>
+              <div className="carousel-image">6</div>
+              <div className="carousel-image">7</div>
+              <div className="carousel-image">8</div>
+            </div>
           </section>
 
           {/* Education Section */}
