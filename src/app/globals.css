@@ -175,3 +175,35 @@ body {
     transform: rotateX(-10deg) scale(.6) translateY(-60px);
   }
 }
+
+@font-face {
+  font-display: block;
+  font-family: Mori;
+  font-style: normal;
+  font-weight: 900;
+  src: url(https://assets.codepen.io/16327/PPMori-SemiBold.woff) format("woff");
+}
+
+.container {
+  width: 90vw;
+  margin-top: 40vh;
+}
+
+.split {
+  opacity: 0;
+  text-align: center;
+  font-size: 2rem;
+  will-change: transform;
+}
+
+.split * {
+  will-change: transform;
+}
+
+.spacer {
+  height: 40vh
+}
+.line {
+  display: block;
+  overflow: hidden;
+}

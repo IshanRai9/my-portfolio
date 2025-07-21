@@ -6,10 +6,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { Observer } from 'gsap/Observer';
+import { SplitText } from 'gsap/SplitText';
 import { useGSAP } from '@gsap/react';
 import Image from 'next/image';
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, TextPlugin, Observer);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, TextPlugin, Observer, SplitText);
 
 export default function Page() {
   const main = useRef(null);
@@ -59,7 +60,77 @@ export default function Page() {
     return () => observer.disconnect();
   }, []);
   
-
+  useEffect(() => {
+    console.clear();
+    gsap.set(".split", { opacity: 1 });
+  
+    document.fonts.ready.then(() => {
+      const containers = gsap.utils.toArray<HTMLElement>(".container");
+  
+      containers.forEach((container) => {
+        const text = container.querySelector(".split");
+  
+        if (!text) return;
+  
+        const split = new SplitText(text, {
+          type: "lines",
+          linesClass: "line"
+        });
+  
+        gsap.from(split.lines, {
+          yPercent: 120,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: container,
+            start: "top center+=50",
+            end: "bottom center",
+            scrub: true,
+            markers: false
+          }
+        });
+      });
+    });
+  }, []);
+  
+ useEffect(() => {
+    if (!isLoading) {
+      const images = document.querySelectorAll('.carousel-image');
+      const carousel = document.querySelector('.carousel') as HTMLElement;
+      const radius = 242;
+      const progress = { value: 0 };
+  
+      const animate = () => {
+        images.forEach((image, index) => {
+          const theta = index / images.length - progress.value;
+          const x = -Math.sin(theta * Math.PI * 2) * radius;
+          const y = Math.cos(theta * Math.PI * 2) * radius;
+          (image as HTMLElement).style.transform = `translate3d(${x}px, 0px, ${y}px) rotateY(${360 * -theta}deg)`;
+          const c = Math.floor(index / images.length * 360);
+          (image as HTMLElement).style.background = `hsla(${c}, 90%, 50%, .5)`;
+        });
+      };
+  
+      gsap.ticker.add(animate);
+  
+      Observer.create({
+        target: carousel,
+        type: 'wheel,pointer',
+        onPress: () => { carousel.style.cursor = 'grabbing'; },
+        onRelease: () => { carousel.style.cursor = 'grab'; },
+        onChange: (self) => {
+          gsap.killTweensOf(progress);
+          const p = self.event.type === 'wheel' ? self.deltaY * -0.0005 : self.deltaX * 0.05;
+          gsap.to(progress, {
+            duration: 2,
+            ease: 'power4.out',
+            value: `+=${p}`,
+          });
+        },
+      });
+    }
+  }, [isLoading]);
+  
   useGSAP(() => {
     if (!isLoading && !smoother.current) {
       smoother.current = ScrollSmoother.create({
@@ -123,46 +194,6 @@ export default function Page() {
       });
     }
   }, [isLoading]);
-  
-  useEffect(() => {
-    if (!isLoading) {
-      const images = document.querySelectorAll('.carousel-image');
-      const carousel = document.querySelector('.carousel') as HTMLElement;
-      const radius = 242;
-      const progress = { value: 0 };
-  
-      const animate = () => {
-        images.forEach((image, index) => {
-          const theta = index / images.length - progress.value;
-          const x = -Math.sin(theta * Math.PI * 2) * radius;
-          const y = Math.cos(theta * Math.PI * 2) * radius;
-          (image as HTMLElement).style.transform = `translate3d(${x}px, 0px, ${y}px) rotateY(${360 * -theta}deg)`;
-          const c = Math.floor(index / images.length * 360);
-          (image as HTMLElement).style.background = `hsla(${c}, 90%, 50%, .5)`;
-        });
-      };
-  
-      gsap.ticker.add(animate);
-  
-      Observer.create({
-        target: carousel,
-        type: 'wheel,pointer',
-        onPress: () => { carousel.style.cursor = 'grabbing'; },
-        onRelease: () => { carousel.style.cursor = 'grab'; },
-        onChange: (self) => {
-          gsap.killTweensOf(progress);
-          const p = self.event.type === 'wheel' ? self.deltaY * -0.0005 : self.deltaX * 0.05;
-          gsap.to(progress, {
-            duration: 2,
-            ease: 'power4.out',
-            value: `+=${p}`,
-          });
-        },
-      });
-    }
-  }, [isLoading]);
-  
-  
 
     if (isLoading) {
       return (
@@ -187,7 +218,7 @@ export default function Page() {
           {/* Intro Section */}
           <section id="intro" className="fade-in-section bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white">
             <div>
-              <h1 className="text-5xl font-bold mb-4">
+              <h1 className="text-5xl mb-4">
                 <span ref={nameRef}></span>
               </h1>
               <h2 className="text-2xl text-white">
@@ -206,9 +237,9 @@ export default function Page() {
           </section>
 
           {/* About Section */}
-          <section id="about" className="fade-in-section min-h-screen flex flex-col items-start justify-center px-16 bg-glossy-black text-white text-center">
-            <h2 className="text-6xl mx-auto font-bold mb-6">About Me</h2>
-            <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-gray-300">
+          <section id="about" className="container fade-in-section min-h-screen flex flex-col items-start justify-center px-16 bg-amber-300 text-white text-center">
+            <h2 className="text-6xl mx-auto mb-6">About Me</h2>
+            <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-white">
               Results-driven AI/ML and Software Engineer with professional experience in designing, building, 
               and deploying intelligent web applications. Adept at developing machine learning models, optimizing deep learning 
               pipelines, and integrating AI into production systems. Proven success in leading cross-functional projects, 
@@ -219,41 +250,40 @@ export default function Page() {
 
           {/* Experience Section */}
           <section id="experience" className=" min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
-            <h2 className="text-4xl font-bold">Experience</h2>
+            <h2 className="text-4xl ">Experience</h2>
           </section>
 
           {/* Skills Section */}
           <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-50 text-black text-center">
-            <h2 className="text-6xl font-bold">My Skills</h2>
+            <h2 className="text-6xl ">My Skills</h2>
             <p className="mt-4">
               <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" alt="Skill icons" width={700} height={40} unoptimized/>
             </p>
           </section>
         
           {/* Projects Section */}
-          <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-16 bg-zinc-100 text-black">
-            <h2 className="text-4xl font-bold mb-10">Projects</h2>
+          <section id="projects" className="min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
+            <h2 className="text-4xl mb-10">Projects</h2>
               <div className="carousel relative w-full h-[500px]">
-                <div className="carousel-image">1</div>
+                <div className="carousel-image">Tender-Qualification-Analysis</div>
                 <div className="carousel-image">2</div>
                 <div className="carousel-image">3</div>
                 <div className="carousel-image">4</div>
                 <div className="carousel-image">5</div>
                 <div className="carousel-image">6</div>
                 <div className="carousel-image">7</div>
-                <div className="carousel-image">8</div>
               </div>
           </section>
 
 
           {/* Education Section */}
           <section id="education" className="min-h-screen flex items-center justify-center px-16 bg-white text-black">
-            <h2 className="text-4xl font-bold">Education</h2>
+            <h2 className="text-4xl ">Education</h2>
           </section>
 
           {/* Certifications Section */}
           <section id="certifications" className="min-h-screen flex items-center justify-center px-16 bg-zinc-100 text-black">
-            <h2 className="text-4xl font-bold">Certifications</h2>
+            <h2 className="text-4xl ">Certifications</h2>
           </section>
 
           {/* Contact Section */}
