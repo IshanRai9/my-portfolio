@@ -5,10 +5,11 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { TextPlugin } from 'gsap/TextPlugin';
+import { Observer } from 'gsap/Observer';
 import { useGSAP } from '@gsap/react';
 import Image from 'next/image';
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, TextPlugin);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, TextPlugin, Observer);
 
 export default function Page() {
   const main = useRef(null);
@@ -124,49 +125,43 @@ export default function Page() {
   }, [isLoading]);
   
   useEffect(() => {
-    const carousel = document.querySelector('.carousel') as HTMLElement;
-    const images = document.querySelectorAll('.carousel-image') as NodeListOf<HTMLElement>;
-    const radius = 242;
-    const progress = { value: 0 };
+    if (!isLoading) {
+      const images = document.querySelectorAll('.carousel-image');
+      const carousel = document.querySelector('.carousel') as HTMLElement;
+      const radius = 242;
+      const progress = { value: 0 };
   
-    if (!carousel || images.length === 0) return;
-  
-    Observer.create({
-      target: carousel,
-      type: "wheel,pointer",
-      onPress: () => {
-        carousel.style.cursor = 'grabbing';
-      },
-      onRelease: () => {
-        carousel.style.cursor = 'grab';
-      },
-      onChange: (self) => {
-        gsap.killTweensOf(progress);
-        const p = self.event.type === 'wheel' ? self.deltaY * -0.0005 : self.deltaX * 0.05;
-        gsap.to(progress, {
-          duration: 2,
-          ease: 'power4.out',
-          value: `+=${p}`,
+      const animate = () => {
+        images.forEach((image, index) => {
+          const theta = index / images.length - progress.value;
+          const x = -Math.sin(theta * Math.PI * 2) * radius;
+          const y = Math.cos(theta * Math.PI * 2) * radius;
+          (image as HTMLElement).style.transform = `translate3d(${x}px, 0px, ${y}px) rotateY(${360 * -theta}deg)`;
+          const c = Math.floor(index / images.length * 360);
+          (image as HTMLElement).style.background = `hsla(${c}, 90%, 50%, .5)`;
         });
-      }
-    });
+      };
   
-    const animate = () => {
-      images.forEach((image, index) => {
-        const theta = index / images.length - progress.value;
-        const x = -Math.sin(theta * Math.PI * 2) * radius;
-        const y = Math.cos(theta * Math.PI * 2) * radius;
-        image.style.transform = `translate3d(${x}px, 0px, ${y}px) rotateY(${360 * -theta}deg)`;
-        const c = Math.floor(index / images.length * 360);
-        image.style.background = `hsla(${c}, 90%, 50%, .5)`;
+      gsap.ticker.add(animate);
+  
+      Observer.create({
+        target: carousel,
+        type: 'wheel,pointer',
+        onPress: () => { carousel.style.cursor = 'grabbing'; },
+        onRelease: () => { carousel.style.cursor = 'grab'; },
+        onChange: (self) => {
+          gsap.killTweensOf(progress);
+          const p = self.event.type === 'wheel' ? self.deltaY * -0.0005 : self.deltaX * 0.05;
+          gsap.to(progress, {
+            duration: 2,
+            ease: 'power4.out',
+            value: `+=${p}`,
+          });
+        },
       });
-    };
-    gsap.ticker.add(animate);
+    }
+  }, [isLoading]);
   
-    return () => {
-      gsap.ticker.remove(animate);
-    };
-  }, []);
   
 
     if (isLoading) {
@@ -234,11 +229,11 @@ export default function Page() {
               <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" alt="Skill icons" width={700} height={40} unoptimized/>
             </p>
           </section>
-
+        
           {/* Projects Section */}
-          <section id="projects" className="bg-glossy-black text-white">
-            <h2 className="text-4xl font-bold">Projects</h2>
-              <div className="carousel">
+          <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-16 bg-zinc-100 text-black">
+            <h2 className="text-4xl font-bold mb-10">Projects</h2>
+              <div className="carousel relative w-full h-[500px]">
                 <div className="carousel-image">1</div>
                 <div className="carousel-image">2</div>
                 <div className="carousel-image">3</div>
@@ -249,6 +244,7 @@ export default function Page() {
                 <div className="carousel-image">8</div>
               </div>
           </section>
+
 
           {/* Education Section */}
           <section id="education" className="min-h-screen flex items-center justify-center px-16 bg-white text-black">
