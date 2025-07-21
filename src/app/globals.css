@@ -50,22 +50,6 @@ body {
   background-attachment: fixed;
 }
 
-/* Fade-in Slide-up Section */
-.fade-in-section {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all 0.8s ease-out;
-}
-.fade-in-section.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Optional: Light Section Overlay */
-.bg-overlay {
-  background: rgba(255, 255, 255, 0.05);
-}
-
 .caret {
   font-weight: 900;
   font-size: 1.5rem;
@@ -139,10 +123,6 @@ body {
   }
 }
 
-body {
-  font-family: Roboto, sans-serif;
-}
-
 .carousel {
   width: 100%;
   display: flex;
@@ -184,26 +164,22 @@ body {
   src: url(https://assets.codepen.io/16327/PPMori-SemiBold.woff) format("woff");
 }
 
-.container {
-  width: 90vw;
-  margin-top: 40vh;
+.split {
+  opacity: 1;
+  text-align: center;
+  will-change: transform;
 }
 
-.split {
-  opacity: 0;
-  text-align: center;
-  font-size: 2rem;
-  will-change: transform;
+.split.visible {
+  opacity: 1;
 }
 
 .split * {
   will-change: transform;
 }
 
-.spacer {
-  height: 40vh
-}
 .line {
   display: block;
   overflow: hidden;
 }
+

@@ -9,7 +9,7 @@ import { Observer } from 'gsap/Observer';
 import { SplitText } from 'gsap/SplitText';
 import { useGSAP } from '@gsap/react';
 import Image from 'next/image';
-
+import './globals.css'; // Import your global styles
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, TextPlugin, Observer, SplitText);
 
 export default function Page() {
@@ -46,53 +46,6 @@ export default function Page() {
     };
   }, []);
   
-  useEffect(() => {
-    const sections = document.querySelectorAll('.fade-in-section');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1 });
-  
-    sections.forEach(section => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
-  
-  useEffect(() => {
-    console.clear();
-    gsap.set(".split", { opacity: 1 });
-  
-    document.fonts.ready.then(() => {
-      const containers = gsap.utils.toArray<HTMLElement>(".container");
-  
-      containers.forEach((container) => {
-        const text = container.querySelector(".split");
-  
-        if (!text) return;
-  
-        const split = new SplitText(text, {
-          type: "lines",
-          linesClass: "line"
-        });
-  
-        gsap.from(split.lines, {
-          yPercent: 120,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: container,
-            start: "top center+=50",
-            end: "bottom center",
-            scrub: true,
-            markers: false
-          }
-        });
-      });
-    });
-  }, []);
-  
  useEffect(() => {
     if (!isLoading) {
       const images = document.querySelectorAll('.carousel-image');
@@ -120,7 +73,7 @@ export default function Page() {
         onRelease: () => { carousel.style.cursor = 'grab'; },
         onChange: (self) => {
           gsap.killTweensOf(progress);
-          const p = self.event.type === 'wheel' ? self.deltaY * -0.0005 : self.deltaX * 0.05;
+          const p = self.event.type === 'wheel' ? self.deltaY * -.0005 : self.deltaX * .05;
           gsap.to(progress, {
             duration: 2,
             ease: 'power4.out',
@@ -212,11 +165,12 @@ export default function Page() {
 
   return (
     <div id="smooth-wrapper" ref={main} className="bg-glossy-black">
+      <div id="noise-wrapper"></div>
       <div id="smooth-content">
         <main className="font-sans scroll-smooth text-white">
 
           {/* Intro Section */}
-          <section id="intro" className="fade-in-section bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white">
+          <section id="intro" className="bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white">
             <div>
               <h1 className="text-5xl mb-4">
                 <span ref={nameRef}></span>
@@ -232,30 +186,29 @@ export default function Page() {
               </p>
             </div>
             <div>
-              <Image src="/img/profile.png" alt="Profile" width={500} height={500} className="rounded-full" />
+              <Image src="/img/profile.png" alt="Profile" width={400} height={400} className="rounded-full" />
             </div>
           </section>
 
           {/* About Section */}
-          <section id="about" className="container fade-in-section min-h-screen flex flex-col items-start justify-center px-16 bg-amber-300 text-white text-center">
+          <section id="about" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-300 text-white text-center">
             <h2 className="text-6xl mx-auto mb-6">About Me</h2>
             <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-white">
-              Results-driven AI/ML and Software Engineer with professional experience in designing, building, 
-              and deploying intelligent web applications. Adept at developing machine learning models, optimizing deep learning 
-              pipelines, and integrating AI into production systems. Proven success in leading cross-functional projects, 
-              collaborating with product teams, and delivering scalable, high-performance software solutions. Passionate 
-              about solving real-world problems through AI, automation, and data-driven innovation.
+              Results-driven AI/ML and Software Engineer with professional experience in designing, building, and deploying intelligent web applications. Adept at developing machine learning models, optimizing deep learning pipelines, and integrating AI into production systems.
+            </p>
+            <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-white">
+              Proven success in leading cross-functional projects,collaborating with product teams, and delivering scalable, high-performance software solutions Passionate about solving real-world problems through AI, automation, and data-driven innovation.
             </p>
           </section>
 
           {/* Experience Section */}
-          <section id="experience" className=" min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
-            <h2 className="text-4xl ">Experience</h2>
+          <section id="experience" className="min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
+            <h2 className="text-6xl mx-auto mb-6">Experience</h2>
           </section>
 
           {/* Skills Section */}
-          <section id="skills" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-50 text-black text-center">
-            <h2 className="text-6xl ">My Skills</h2>
+          <section id="skills" className="min-h-screen flex items-center justify-center px-16 bg-amber-300 text-white text-center">
+            <h2 className="text-6xl mx-auto mb-6">My Skills</h2>
             <p className="mt-4">
               <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" alt="Skill icons" width={700} height={40} unoptimized/>
             </p>
@@ -264,15 +217,7 @@ export default function Page() {
           {/* Projects Section */}
           <section id="projects" className="min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
             <h2 className="text-4xl mb-10">Projects</h2>
-              <div className="carousel relative w-full h-[500px]">
-                <div className="carousel-image">Tender-Qualification-Analysis</div>
-                <div className="carousel-image">2</div>
-                <div className="carousel-image">3</div>
-                <div className="carousel-image">4</div>
-                <div className="carousel-image">5</div>
-                <div className="carousel-image">6</div>
-                <div className="carousel-image">7</div>
-              </div>
+              
           </section>
 
 
@@ -284,6 +229,16 @@ export default function Page() {
           {/* Certifications Section */}
           <section id="certifications" className="min-h-screen flex items-center justify-center px-16 bg-zinc-100 text-black">
             <h2 className="text-4xl ">Certifications</h2>
+              <div className="carousel">
+                <div className="carousel-image">1</div>
+                <div className="carousel-image">2</div>
+                <div className="carousel-image">3</div>
+                <div className="carousel-image">4</div>
+                <div className="carousel-image">5</div>
+                <div className="carousel-image">6</div>
+                <div className="carousel-image">7</div>
+                <div className="carousel-image">8</div>
+              </div>
           </section>
 
           {/* Contact Section */}
