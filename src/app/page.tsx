@@ -124,8 +124,8 @@ export default function Page() {
   }, [isLoading]);
   
   useEffect(() => {
-    const images = document.querySelectorAll('.carousel-image');
-    const carousel = document.querySelector('.carousel');
+    const carousel = document.querySelector('.carousel') as HTMLElement;
+    const images = document.querySelectorAll('.carousel-image') as NodeListOf<HTMLElement>;
     const radius = 242;
     const progress = { value: 0 };
   
@@ -190,7 +190,7 @@ export default function Page() {
         <main className="font-sans scroll-smooth text-white">
 
           {/* Intro Section */}
-          <section id="intro" className="container  bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white">
+          <section id="intro" className="fade-in-section bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white">
             <div>
               <h1 className="text-5xl font-bold mb-4">
                 <span ref={nameRef}></span>
@@ -211,7 +211,7 @@ export default function Page() {
           </section>
 
           {/* About Section */}
-          <section id="about" className="min-h-screen flex flex-col items-start justify-center px-16 bg-glossy-black text-white text-center">
+          <section id="about" className="fade-in-section min-h-screen flex flex-col items-start justify-center px-16 bg-glossy-black text-white text-center">
             <h2 className="text-6xl mx-auto font-bold mb-6">About Me</h2>
             <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-gray-300">
               Results-driven AI/ML and Software Engineer with professional experience in designing, building, 
