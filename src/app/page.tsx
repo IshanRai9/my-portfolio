@@ -116,7 +116,7 @@ export default function Page() {
       });
   
       // ✅ Animate sections when they enter view
-      ScrollTrigger.batch(['#intro', '#about', '#experience'], {
+      ScrollTrigger.batch(['#intro'], {
         onEnter: batch => {
           gsap.fromTo(
             batch,
@@ -172,13 +172,9 @@ export default function Page() {
           {/* Intro Section */}
           <section id="intro" className="bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white">
             <div>
-              <h1 className="text-5xl mb-4">
-                <span ref={nameRef}></span>
-              </h1>
-              <h2 className="text-2xl text-white">
-                <span ref={titleRef}></span>
-                <span className="caret opacity-0">|</span>
-              </h2>
+              <h1 className="text-5xl mb-4"><span ref={nameRef}></span></h1>
+              <h2 className="first text-2xl text-white"><span ref={titleRef}></span></h2>
+              
               <p className="flex flex-row flex-wrap gap-2 items-center mt-2">
                 <a href="https://www.github.com/ishanrai9"><Image src="https://skillicons.dev/icons?i=github&theme=dark" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
                 <a href="https://www.linkedin.com/in/ishan-s-rai/"><Image src="https://skillicons.dev/icons?i=linkedin&theme=dark" alt="LinkedIn" width={50} height={40} unoptimized className="grayscale"/></a>
@@ -193,10 +189,10 @@ export default function Page() {
           {/* About Section */}
           <section id="about" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-300 text-white text-center">
             <h2 className="text-6xl mx-auto mb-6">About Me</h2>
-            <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-white">
+            <p className="max-w-8xl text-2xl mx-auto leading-relaxed text-white">
               Results-driven AI/ML and Software Engineer with professional experience in designing, building, and deploying intelligent web applications. Adept at developing machine learning models, optimizing deep learning pipelines, and integrating AI into production systems.
             </p>
-            <p className="max-w-7xl text-2xl mx-auto leading-relaxed text-white">
+            <p className="max-w-8xl text-2xl mx-auto leading-relaxed text-white">
               Proven success in leading cross-functional projects,collaborating with product teams, and delivering scalable, high-performance software solutions Passionate about solving real-world problems through AI, automation, and data-driven innovation.
             </p>
           </section>
@@ -230,7 +226,7 @@ export default function Page() {
           <section id="certifications" className="min-h-screen flex items-center justify-center px-16 bg-zinc-100 text-black">
             <h2 className="text-4xl ">Certifications</h2>
               <div className="carousel">
-                <div className="carousel-image">1</div>
+                <div className="carousel-image"><Image src="/img/TED.jpg" alt="certi" width={400} height={300} unoptimized /></div>
                 <div className="carousel-image">2</div>
                 <div className="carousel-image">3</div>
                 <div className="carousel-image">4</div>
