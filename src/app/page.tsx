@@ -1,28 +1,25 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ScrollSmoother } from 'gsap/ScrollSmoother';
-import { TextPlugin } from 'gsap/TextPlugin';
-import { Observer } from 'gsap/Observer';
-import { SplitText } from 'gsap/SplitText';
-import { useGSAP } from '@gsap/react';
+import { animate } from 'animejs';
 import Image from 'next/image';
-import './globals.css'; // Import your global styles
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, TextPlugin, Observer, SplitText);
+import './globals.css';
 
 export default function Page() {
   const main = useRef(null);
-  const smoother = useRef<ScrollSmoother | null>(null);
   const nameRef = useRef(null);
   const titleRef = useRef(null);
+  const introRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingPercent, setLoadingPercent] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+
+  // Loading animation
   useEffect(() => {
     let percent = 0;
     let interval: NodeJS.Timeout;
     let timer: NodeJS.Timeout;
+    
     if (isLoading) {
       interval = setInterval(() => {
         percent += 1;
@@ -33,217 +30,390 @@ export default function Page() {
       }, 50);
       timer = setTimeout(() => setIsLoading(false), 5000);
     }
+    
     return () => {
       clearInterval(interval);
       clearTimeout(timer);
     };
   }, [isLoading]);
 
+  // Scroll tracking for parallax
   useEffect(() => {
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      smoother.current?.kill();
-    };
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
- useEffect(() => {
+
+  // 3D Carousel animation
+  useEffect(() => {
     if (!isLoading) {
       const images = document.querySelectorAll('.carousel-image');
       const carousel = document.querySelector('.carousel') as HTMLElement;
       const radius = 242;
-      const progress = { value: 0 };
-  
-      const animate = () => {
+      let progress = 0;
+      let isMouseDown = false;
+      let startX = 0;
+      let currentRotation = 0;
+
+      const updateCarousel = () => {
         images.forEach((image, index) => {
-          const theta = index / images.length - progress.value;
+          const theta = index / images.length + progress;
           const x = -Math.sin(theta * Math.PI * 2) * radius;
           const y = Math.cos(theta * Math.PI * 2) * radius;
-          (image as HTMLElement).style.transform = `translate3d(${x}px, 0px, ${y}px) rotateY(${360 * -theta}deg)`;
-          const c = Math.floor(index / images.length * 360);
-          (image as HTMLElement).style.background = `hsla(${c}, 90%, 50%, .5)`;
+          const rotation = 360 * theta;
+          
+          (image as HTMLElement).style.transform = 
+            `translate3d(${x}px, 0px, ${y}px) rotateY(${rotation}deg)`;
+          
+          const hue = Math.floor(index / images.length * 360);
+          (image as HTMLElement).style.background = 
+            `hsla(${hue}, 90%, 50%, .5)`;
         });
       };
-  
-      gsap.ticker.add(animate);
-  
-      Observer.create({
-        target: carousel,
-        type: 'wheel,pointer',
-        onPress: () => { carousel.style.cursor = 'grabbing'; },
-        onRelease: () => { carousel.style.cursor = 'grab'; },
-        onChange: (self) => {
-          gsap.killTweensOf(progress);
-          const p = self.event.type === 'wheel' ? self.deltaY * -.0005 : self.deltaX * .05;
-          gsap.to(progress, {
-            duration: 2,
-            ease: 'power4.out',
-            value: `+=${p}`,
-          });
-        },
-      });
-    }
-  }, [isLoading]);
-  
-  useGSAP(() => {
-    if (!isLoading && !smoother.current) {
-      smoother.current = ScrollSmoother.create({
-        wrapper: '#smooth-wrapper',
-        content: '#smooth-content',
-        smooth: 1.2,
-        effects: true,
-      });
-  
-      // Animate text
-      gsap.to(nameRef.current, {
-        text: "Hello, I'm Ishan Rai",
-        duration: 1.3,
-        ease: 'none',
-        onComplete: () => {
-          gsap.to(titleRef.current, {
-            text: 'AI ML Engineer || Full Stack Developer',
-            duration: 1,
-            ease: 'none',
-            onComplete: () => {
-              gsap.to('.caret', {
-                opacity: 1,
-                repeat: -1,
-                yoyo: true,
-                duration: 0.5,
-              });
-            },
-          });
-        },
-      });
-  
-      // ✅ Animate sections when they enter view
-      ScrollTrigger.batch(['#intro'], {
-        onEnter: batch => {
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: 100 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              stagger: 0.2,
-              ease: 'power2.out',
-            }
-          );
-        },
-        once: true,
-        start: 'top 80%',
-      });
-  
-      // ✅ Parallax effect for intro
-      gsap.to('#intro', {
-        yPercent: -10,
-        ease: 'power1.out',
-        scrollTrigger: {
-          trigger: '#intro',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
-        },
-      });
+
+      // Mouse/touch interactions
+      const handleStart = (e: MouseEvent | TouchEvent) => {
+        isMouseDown = true;
+        startX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        carousel.style.cursor = 'grabbing';
+      };
+
+      const handleMove = (e: MouseEvent | TouchEvent) => {
+        if (!isMouseDown) return;
+        
+        const currentX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        const deltaX = (currentX - startX) * 0.01;
+        progress += deltaX;
+        startX = currentX;
+        updateCarousel();
+      };
+
+      const handleEnd = () => {
+        isMouseDown = false;
+        carousel.style.cursor = 'grab';
+      };
+
+      // Wheel interaction
+      const handleWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        const delta = e.deltaY * -0.001;
+        
+        animate({
+          targets: { value: progress },
+          value: progress + delta,
+          duration: 1000,
+          easing: 'easeOutQuart',
+          update: (anim) => {
+            progress = anim.animatables[0].target.value;
+            updateCarousel();
+          }
+        });
+      };
+
+      // Event listeners
+      carousel.addEventListener('mousedown', handleStart);
+      carousel.addEventListener('mousemove', handleMove);
+      carousel.addEventListener('mouseup', handleEnd);
+      carousel.addEventListener('mouseleave', handleEnd);
+      carousel.addEventListener('touchstart', handleStart);
+      carousel.addEventListener('touchmove', handleMove);
+      carousel.addEventListener('touchend', handleEnd);
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+
+      updateCarousel();
+
+      return () => {
+        carousel.removeEventListener('mousedown', handleStart);
+        carousel.removeEventListener('mousemove', handleMove);
+        carousel.removeEventListener('mouseup', handleEnd);
+        carousel.removeEventListener('mouseleave', handleEnd);
+        carousel.removeEventListener('touchstart', handleStart);
+        carousel.removeEventListener('touchmove', handleMove);
+        carousel.removeEventListener('touchend', handleEnd);
+        carousel.removeEventListener('wheel', handleWheel);
+      };
     }
   }, [isLoading]);
 
-    if (isLoading) {
-      return (
-        <div className="loader-wrapper" role="status" aria-label="Loading content">
-          <div className="loader">
-            <div className="box"></div>
-            <div className="box"></div>
-            <div className="box"></div>
-            <div className="box"></div>
-            <div className="box"></div>
-            <div className="loader-percent">{loadingPercent}%</div>
-          </div>
-        </div>
-      );
+  // Main animations when loading completes
+  useEffect(() => {
+    if (!isLoading) {
+      // Typewriter effect for name
+      const nameText = "Hello, I'm Ishan Rai";
+      const titleText = "AI ML Engineer";
+      
+      if (nameRef.current) {
+        (nameRef.current as HTMLElement).textContent = '';
+        
+        animate({
+          targets: nameRef.current,
+          innerHTML: [0, nameText.length],
+          duration: 1300,
+          easing: 'linear',
+          round: 1,
+          update: (anim) => {
+            const progress = Math.round(anim.progress * nameText.length / 100);
+            (nameRef.current as HTMLElement).textContent = nameText.slice(0, progress);
+          },
+          complete: () => {
+            // Start title animation
+            if (titleRef.current) {
+              (titleRef.current as HTMLElement).textContent = '';
+              
+              animate({
+                targets: titleRef.current,
+                innerHTML: [0, titleText.length],
+                duration: 1000,
+                easing: 'linear',
+                round: 1,
+                update: (anim) => {
+                  const progress = Math.round(anim.progress * titleText.length / 100);
+                  (titleRef.current as HTMLElement).textContent = titleText.slice(0, progress);
+                },
+                complete: () => {
+                  // Start caret blinking
+                  animate({
+                    targets: '.caret',
+                    opacity: [0, 1],
+                    duration: 500,
+                    direction: 'alternate',
+                    loop: true
+                  });
+                }
+              });
+            }
+          }
+        });
+      }
+
+      // Fade in intro section
+      if (introRef.current) {
+        anime({
+          targets: introRef.current,
+          opacity: [0, 1],
+          translateY: [100, 0],
+          duration: 1000,
+          easing: 'easeOutQuart',
+          delay: 500
+        });
+      }
+
+      // Animate sections on scroll
+      const observerCallback = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            anime({
+              targets: entry.target,
+              opacity: [0, 1],
+              translateY: [50, 0],
+              duration: 800,
+              easing: 'easeOutQuart'
+            });
+          }
+        });
+      };
+
+      const observer = new IntersectionObserver(observerCallback, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+      });
+
+      // Observe all sections except intro
+      const sections = document.querySelectorAll('section:not(#intro)');
+      sections.forEach(section => {
+        (section as HTMLElement).style.opacity = '0';
+        observer.observe(section);
+      });
+
+      return () => {
+        observer.disconnect();
+      };
     }
+  }, [isLoading]);
+
+  // Parallax effect for intro
+  useEffect(() => {
+    if (!isLoading && introRef.current) {
+      const parallaxOffset = scrollY * -0.1;
+      (introRef.current as HTMLElement).style.transform = 
+        `translateY(${parallaxOffset}px)`;
+    }
+  }, [scrollY, isLoading]);
+
+  if (isLoading) {
+    return (
+      <div className="loader-wrapper" role="status" aria-label="Loading content">
+        <div className="loader">
+          <div className="box"></div>
+          <div className="box"></div>
+          <div className="box"></div>
+          <div className="box"></div>
+          <div className="box"></div>
+          <div className="loader-percent">{loadingPercent}%</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div id="smooth-wrapper" ref={main} className="bg-glossy-black">
+    <div ref={main} className="bg-glossy-black">
       <div id="noise-wrapper"></div>
-      <div id="smooth-content">
-        <main className="font-sans scroll-smooth text-white">
-
-          {/* Intro Section */}
-          <section id="intro" className="bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white">
-            <div>
-              <h1 className="text-5xl mb-4"><span ref={nameRef}></span></h1>
-              <h2 className="first text-2xl text-white"><span ref={titleRef}></span></h2>
-              
-              <p className="flex flex-row flex-wrap gap-2 items-center mt-2">
-                <a href="https://www.github.com/ishanrai9"><Image src="https://skillicons.dev/icons?i=github&theme=dark" alt="Skill icons" width={50} height={40} unoptimized className="grayscale"/></a>
-                <a href="https://www.linkedin.com/in/ishan-s-rai/"><Image src="https://skillicons.dev/icons?i=linkedin&theme=dark" alt="LinkedIn" width={50} height={40} unoptimized className="grayscale"/></a>
-                <a href="https://x.com/iamishanrai/"><Image src="https://skillicons.dev/icons?i=twitter&theme=dark" alt="Twitter" width={50} height={40} unoptimized className="grayscale"/></a>
-              </p>
-            </div>
-            <div>
-              <Image src="/img/profile.png" alt="Profile" width={400} height={400} className="rounded-full" />
-            </div>
-          </section>
-
-          {/* About Section */}
-          <section id="about" className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-300 text-white text-center">
-            <h2 className="text-6xl mx-auto mb-6">About Me</h2>
-            <p className="max-w-8xl text-2xl mx-auto leading-relaxed text-white">
-              Results-driven AI/ML and Software Engineer with professional experience in designing, building, and deploying intelligent web applications. Adept at developing machine learning models, optimizing deep learning pipelines, and integrating AI into production systems.
+      <main className="font-sans scroll-smooth text-white">
+        {/* Intro Section */}
+        <section 
+          id="intro" 
+          ref={introRef}
+          className="bg-glossy-black min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-40 text-white"
+          style={{ opacity: 0 }}
+        >
+          <div> 
+            <p className="text-5xl mb-4">
+              <span ref={nameRef}></span>
+              <span className="caret" style={{ opacity: 0 }}>|</span>
             </p>
-            <p className="max-w-8xl text-2xl mx-auto leading-relaxed text-white">
-              Proven success in leading cross-functional projects,collaborating with product teams, and delivering scalable, high-performance software solutions Passionate about solving real-world problems through AI, automation, and data-driven innovation.
+            <div className='animation'>
+              <div className="first text-2xl text-white">
+                <span className='first' ref={titleRef}></span>
+              </div>
+              <div className="second">
+                <div>Web Developer</div>
+              </div>
+            </div>
+            <p className="flex flex-row flex-wrap gap-2 items-center mt-2">
+              <a href="https://www.github.com/ishanrai9">
+                <Image 
+                  src="https://skillicons.dev/icons?i=github&theme=dark" 
+                  alt="GitHub" 
+                  width={50} 
+                  height={40} 
+                  unoptimized 
+                  className="grayscale"
+                />
+              </a>
+              <a href="https://www.linkedin.com/in/ishan-s-rai/">
+                <Image 
+                  src="https://skillicons.dev/icons?i=linkedin&theme=dark" 
+                  alt="LinkedIn" 
+                  width={50} 
+                  height={40} 
+                  unoptimized 
+                  className="grayscale"
+                />
+              </a>
+              <a href="https://x.com/iamishanrai/">
+                <Image 
+                  src="https://skillicons.dev/icons?i=twitter&theme=dark" 
+                  alt="Twitter" 
+                  width={50} 
+                  height={40} 
+                  unoptimized 
+                  className="grayscale"
+                />
+              </a>
             </p>
-          </section>
+          </div>
+          <div>
+            <Image 
+              src="/img/profile.png" 
+              alt="Profile" 
+              width={400} 
+              height={400} 
+              className="rounded-full" 
+            />
+          </div>
+        </section>
 
-          {/* Experience Section */}
-          <section id="experience" className="min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
-            <h2 className="text-6xl mx-auto mb-6">Experience</h2>
-          </section>
+        {/* About Section */}
+        <section 
+          id="about" 
+          className="min-h-screen flex flex-col items-start justify-center px-16 bg-amber-300 text-white text-center"
+        >
+          <h2 className="text-6xl mx-auto mb-6">About Me</h2>
+          <p className="max-w-8xl text-2xl mx-auto leading-relaxed text-white">
+            Results-driven AI/ML and Software Engineer with professional experience in designing, building, and deploying intelligent web applications. Adept at developing machine learning models, optimizing deep learning pipelines, and integrating AI into production systems.
+          </p>
+          <p className="max-w-8xl text-2xl mx-auto leading-relaxed text-white">
+            Proven success in leading cross-functional projects, collaborating with product teams, and delivering scalable, high-performance software solutions. Passionate about solving real-world problems through AI, automation, and data-driven innovation.
+          </p>
+        </section>
 
-          {/* Skills Section */}
-          <section id="skills" className="min-h-screen flex items-center justify-center px-16 bg-amber-300 text-white text-center">
+        {/* Experience Section */}
+        <section 
+          id="experience" 
+          className="min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white"
+        >
+          <h2 className="text-6xl mx-auto mb-6">Experience</h2>
+        </section>
+
+        {/* Skills Section */}
+        <section 
+          id="skills" 
+          className="min-h-screen flex items-center justify-center px-16 bg-amber-300 text-white text-center"
+        >
+          <div>
             <h2 className="text-6xl mx-auto mb-6">My Skills</h2>
             <p className="mt-4">
-              <Image src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" alt="Skill icons" width={700} height={40} unoptimized/>
+              <Image 
+                src="https://skillicons.dev/icons?i=python,java,c,cpp,html,css,js,react,nextjs,nodejs,express,git,github,aws,azure,tailwind,flask,tensorflow,pytorch,sklearn,opencv,anaconda,docker,postman,vscode,bash,figma,selenium&perline=9&theme=dark" 
+                alt="Skill icons" 
+                width={700} 
+                height={40} 
+                unoptimized
+              />
             </p>
-          </section>
-        
-          {/* Projects Section */}
-          <section id="projects" className="min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white">
-            <h2 className="text-4xl mb-10">Projects</h2>
-              
-          </section>
+          </div>
+        </section>
+      
+        {/* Projects Section */}
+        <section 
+          id="projects" 
+          className="min-h-screen flex items-center justify-center px-16 bg-glossy-black text-white"
+        >
+          <h2 className="text-4xl mb-10">Projects</h2>
+        </section>
 
+        {/* Education Section */}
+        <section 
+          id="education" 
+          className="min-h-screen flex items-center justify-center px-16 bg-white text-black"
+        >
+          <h2 className="text-4xl">Education</h2>
+        </section>
 
-          {/* Education Section */}
-          <section id="education" className="min-h-screen flex items-center justify-center px-16 bg-white text-black">
-            <h2 className="text-4xl ">Education</h2>
-          </section>
+        {/* Certifications Section */}
+        <section 
+          id="certifications" 
+          className="min-h-screen flex flex-col items-center justify-center px-16 bg-zinc-100 text-black"
+        >
+          <h2 className="text-4xl mb-8">Certifications</h2>
+          <div className="carousel">
+            <div className="carousel-image">
+              <Image 
+                src="/img/TED.jpg" 
+                alt="Certificate" 
+                width={200} 
+                height={150} 
+                unoptimized 
+              />
+            </div>
+            <div className="carousel-image">2</div>
+            <div className="carousel-image">3</div>
+            <div className="carousel-image">4</div>
+            <div className="carousel-image">5</div>
+            <div className="carousel-image">6</div>
+            <div className="carousel-image">7</div>
+            <div className="carousel-image">8</div>
+          </div>
+        </section>
 
-          {/* Certifications Section */}
-          <section id="certifications" className="min-h-screen flex items-center justify-center px-16 bg-zinc-100 text-black">
-            <h2 className="text-4xl ">Certifications</h2>
-              <div className="carousel">
-                <div className="carousel-image"><Image src="/img/TED.jpg" alt="certi" width={400} height={300} unoptimized /></div>
-                <div className="carousel-image">2</div>
-                <div className="carousel-image">3</div>
-                <div className="carousel-image">4</div>
-                <div className="carousel-image">5</div>
-                <div className="carousel-image">6</div>
-                <div className="carousel-image">7</div>
-                <div className="carousel-image">8</div>
-              </div>
-          </section>
-
-          {/* Contact Section */}
-          <section id="contact" className="min-h-screen flex items-center justify-center px-16 bg-zinc-900 text-white">
-            <h2 className="text-4xl font-bold">Contact Me</h2>
-          </section>
-
-        </main>
-      </div>
+        {/* Contact Section */}
+        <section 
+          id="contact" 
+          className="min-h-screen flex items-center justify-center px-16 bg-zinc-900 text-white"
+        >
+          <h2 className="text-4xl font-bold">Contact Me</h2>
+        </section>
+      </main>
     </div>
   );
 }
